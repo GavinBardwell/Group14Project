@@ -17,7 +17,7 @@ For primary communication we will utilize a text message group chat.
 of the sequence is swapped and then remerged into a larger portion of the sequence. Only arrays of size 2^n can be sorted.
 - Sample Sort: Sample sort is a divide-and-conquer algorithm similar to how quicksort partitions its input into two parts at each step revolved around a singluar pivot value, but what makes sample sort unique is that it chooses a large amount of pivot values and partitions the rest of the elements on these pivots and sorts all these partitions.
 - Merge Sort: Merge sort is a divide-and-conquer algorithm that sorts an array by splitting the array into halves until each sub-array contains a single element. Each sub-array is then put back together in a sorted order.
-- Radix Sort: Radix sorting is a non-comparative sorting algorithm where numbers are placed into buckets based on singular digits going from least significant to most significant.
+- : ing is a non-comparative sorting algorithm where numbers are placed into buckets based on singular digits going from least significant to most significant.
 
 ### 2b. Pseudocode for each parallel algorithm
 
@@ -290,18 +290,18 @@ merge(arr, left, mid, right) {
 ```
 
 
-# Pseudocode for MPI Parallel Radix Sort
-- Radix Sort Pseudocode
+# Pseudocode for MPI Parallel 
+-  Pseudocode
 - Inputs is your global array size, number of processes, and type of sorting
 the algorithm goes as such
 1. Generate your data in each thread
 - this is then sent to the master where it writes it to "unSortedArray.csv"
-2. perform radix sort
+2. perform 
 - seperate each thread into buckets of bits 1s and 0s
 - send the 0s to the top and 1s after that
 - repeat with the next bit
 - send to the master thread
-3. Verify that the radix sort worked
+3. Verify that the  worked
 - this is done in the master thread
 4. write the sorted data to "sortedArray.csv"
 ## Main Function
@@ -347,7 +347,7 @@ main() {
         // Receive data from master
         MPI_Recv(local_data, size, MPI_INT, MASTER, 0, MPI_COMM_WORLD, &status);
 
-        // Perform radix sort on local data
+        // Perform  on local data
         parallel_radix_sort(local_data, max_bits, MPI_COMM_WORLD);
 
         // Send unsorted data to master
@@ -362,7 +362,7 @@ main() {
 }
 ```
 
-## Radix Sort Function
+##  Function
 ```
 parallel_radix_sort(local_data, max_bits, comm) {
     // Iterate over each bit from least significant to most significant
@@ -398,7 +398,7 @@ parallel_radix_sort(local_data, max_bits, comm) {
 }
 ```
 
-## Radix Sort Helper Functions
+##  Helper Functions
 ### `checkSorted(data)`
 ```
 checkSorted(data) {
@@ -499,7 +499,7 @@ Merge Sort
 └─ 0.000 MPI_Comm_dup
 ```
 
-Radix Sort 
+ 
 ```
 0.349 main_comp
 ├─ 0.000 MPI_Comm_free
@@ -576,7 +576,7 @@ For comp large, there appears to be a trend of decreasing time as the number of 
 
 
 Radix Sort
-
+Currently there are issues regarding the metadata that has made analysis extremely difficult. This comes from a mislabeling of the number of processors and matrix size. Radix sort has ran 210/280 of the needed files with most errors coming at the 2^26 and 2^28 inputs and at the 512 and 1024 processor size. This shows that is room for improvement on networking and optomization of parameters. There is not enough communication being done and there is too much of a reliance on the master process.
 ### 4a. Vary the following parameters
 For input_size's:
 - 2^16, 2^18, 2^20, 2^22, 2^24, 2^26, 2^28
