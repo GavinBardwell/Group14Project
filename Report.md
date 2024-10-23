@@ -538,7 +538,17 @@ The calculation increases slightly as we add more processors, but it's important
 I had a significant amount of trouble generating caliper files for the other graphs; however, the implementation is sound, and the other graphs will be generated quickly moving forward.
 
 Sample Sort
+![image](https://github.com/user-attachments/assets/b3536b67-39d5-4489-aa98-0ace6313c4c3)
+Looking at this main graph, it is clear that a sorted array drastically increases the time of the sort in comparison to a random array.
+![image](https://github.com/user-attachments/assets/3f7280c2-6d87-4d61-a948-05d94a01ce1f)
+For the comm graph, it stays pretty consistent times in the different array types. This is likely just due to the low amount of processors so they don't have to compete for resources.
+![image](https://github.com/user-attachments/assets/a84480b7-4608-437f-982e-c7159fbec546)
 
+![image](https://github.com/user-attachments/assets/a1875e8f-824d-4eb0-b566-6905d90b08fb)
+
+![image](https://github.com/user-attachments/assets/53a47842-7e8d-40b2-80a3-b79c76172d49)
+
+For the small computation regions, it seems like the time is just barely larger when an array is sorted in comparison to random, but in the large computation region this is flipped and the time is barely larger when the array is random.
 Merge Sort
 
 ![image](https://github.com/user-attachments/assets/21118255-0b7c-430b-ae64-293636164e49)
