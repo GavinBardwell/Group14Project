@@ -529,6 +529,7 @@ Bitonic Sort
 Sample Sort
 
 Merge Sort
+
 ![image](https://github.com/user-attachments/assets/21118255-0b7c-430b-ae64-293636164e49)
 ![image](https://github.com/user-attachments/assets/93c44f81-5b40-4f97-876f-17b24f3af3ec)
 ![image](https://github.com/user-attachments/assets/6e5eac42-e1a0-4ec2-a610-6eca85a44399)
