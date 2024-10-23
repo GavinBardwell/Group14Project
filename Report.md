@@ -526,6 +526,11 @@ We collect the following metadata for our implementations: the launch date of th
 
 Bitonic Sort
 
+![image](https://github.com/user-attachments/assets/5464bdf0-2fca-4230-b327-68a1ea80e860)
+![image](https://github.com/user-attachments/assets/176a6bd3-a33d-4f5c-96be-048119cc681c)
+![image](https://github.com/user-attachments/assets/776c881d-451e-4e85-aa28-52f9092f645b)
+
+
 Sample Sort
 
 Merge Sort
