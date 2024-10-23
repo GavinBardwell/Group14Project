@@ -7,7 +7,6 @@
 #include <vector>
 #include <algorithm>
 
-
 #include <caliper/cali.h>
 #include <caliper/cali-manager.h>
 #include <adiak.hpp>
@@ -15,16 +14,31 @@
 #define MASTER 0               /* taskid of first task */
 #define MAX_DIGIT 2147483647         /* Number of possible values for each digit (base) */
 
-
 void generateData(int task_id, int num_procs, int array_size, int length_for_local_array, std::vector<int>& local_data, int presorted) {
-    if (presorted) {
-        int base_length = array_size / (num_procs - 1);
-        int remainder = array_size % (num_procs - 1);
-        int start_index = (task_id - 1) * base_length + ((task_id - 1) < remainder ? (task_id - 1) : remainder);
+    int base_length = array_size / (num_procs - 1);
+    int remainder = array_size % (num_procs - 1);
+    int start_index = (task_id - 1) * base_length + ((task_id - 1) < remainder ? (task_id - 1) : remainder);
+
+    if (presorted == 1) { // Sorted
         for (int i = 0; i < length_for_local_array; i++) {
             local_data.push_back(start_index + i); // Generate sorted values
         }
-    } else {
+    } else if (presorted == 2) { // Reverse sorted
+        for (int i = 0; i < length_for_local_array; i++) {
+            local_data.push_back(array_size - (start_index + i) - 1); // Generate reverse sorted values
+        }
+    } else if (presorted == 3) { // 1% perturbed
+        for (int i = 0; i < length_for_local_array; i++) {
+            local_data.push_back(start_index + i); // Start with sorted values
+        }
+        // Perturb 1% of the elements
+        int perturb_count = length_for_local_array / 100;
+        for (int i = 0; i < perturb_count; i++) {
+            int idx1 = rand() % length_for_local_array;
+            int idx2 = rand() % length_for_local_array;
+            std::swap(local_data[idx1], local_data[idx2]);
+        }
+    } else { // Random
         for (int i = 0; i < length_for_local_array; i++) {
             local_data.push_back(rand() % MAX_DIGIT); // Generate random values
         }
@@ -48,11 +62,11 @@ void writeDataToFile(const char *file_name, const std::vector<int>& data) {
     
     fclose(file);
 }
-
 void parallel_radix_sort(std::vector<int>& local_data, int max_bits, MPI_Comm comm) {
     int rank, size;
     MPI_Comm_rank(comm, &rank);
     MPI_Comm_size(comm, &size);
+    int local_size = local_data.size();
 
     for (int bit = 0; bit < max_bits; ++bit) {
         std::vector<int> zero_bucket, one_bucket;
@@ -66,58 +80,40 @@ void parallel_radix_sort(std::vector<int>& local_data, int max_bits, MPI_Comm co
             }
         }
 
-        // Exchange sizes of zero buckets among processes
-        int local_zero_size = zero_bucket.size();
-        std::vector<int> global_zero_sizes(size);
-        MPI_Allgather(&local_zero_size, 1, MPI_INT, global_zero_sizes.data(), 1, MPI_INT, comm);
+        // Gather sizes of zero and one buckets from all processes
+        int zero_bucket_size = zero_bucket.size();
+        int one_bucket_size = one_bucket.size();
+        std::vector<int> all_zero_sizes(size), all_one_sizes(size);
+        MPI_Allgather(&zero_bucket_size, 1, MPI_INT, all_zero_sizes.data(), 1, MPI_INT, comm);
+        MPI_Allgather(&one_bucket_size, 1, MPI_INT, all_one_sizes.data(), 1, MPI_INT, comm);
 
-        // Calculate displacements for gathering zero bucket data
-        std::vector<int> zero_recv_displs(size, 0);
-        for (int i = 1; i < size; ++i) {
-            zero_recv_displs[i] = zero_recv_displs[i - 1] + global_zero_sizes[i - 1];
+        // Calculate displacements and total sizes for zero and one buckets
+        int total_zero_size = 0, total_one_size = 0;
+        std::vector<int> zero_displs(size), one_displs(size);
+        for (int i = 0; i < size; ++i) {
+            zero_displs[i] = total_zero_size;
+            one_displs[i] = total_one_size;
+            total_zero_size += all_zero_sizes[i];
+            total_one_size += all_one_sizes[i];
         }
 
-        int total_zero_recv = zero_recv_displs[size - 1] + global_zero_sizes[size - 1];
+        // Gather all zero and one bucket elements
+        std::vector<int> all_zeros(total_zero_size), all_ones(total_one_size);
+        MPI_Allgatherv(zero_bucket.data(), zero_bucket_size, MPI_INT, all_zeros.data(), all_zero_sizes.data(), zero_displs.data(), MPI_INT, comm);
+        MPI_Allgatherv(one_bucket.data(), one_bucket_size, MPI_INT, all_ones.data(), all_one_sizes.data(), one_displs.data(), MPI_INT, comm);
 
-        // Prepare receive buffer for zero bucket data
-        std::vector<int> zero_recv_buffer(total_zero_recv);
-
-        // All-to-all communication to exchange zero bucket data
-        MPI_Allgatherv(zero_bucket.data(), local_zero_size, MPI_INT,
-                       zero_recv_buffer.data(), global_zero_sizes.data(), zero_recv_displs.data(), MPI_INT, comm);
-
-        // Exchange sizes of one buckets among processes
-        int local_one_size = one_bucket.size();
-        std::vector<int> global_one_sizes(size);
-        MPI_Allgather(&local_one_size, 1, MPI_INT, global_one_sizes.data(), 1, MPI_INT, comm);
-
-        // Calculate displacements for gathering one bucket data
-        std::vector<int> one_recv_displs(size, 0);
-        for (int i = 1; i < size; ++i) {
-            one_recv_displs[i] = one_recv_displs[i - 1] + global_one_sizes[i - 1];
-        }
-
-        int total_one_recv = one_recv_displs[size - 1] + global_one_sizes[size - 1];
-
-        // Prepare receive buffer for one bucket data
-        std::vector<int> one_recv_buffer(total_one_recv);
-
-        // All-to-all communication to exchange one bucket data
-        MPI_Allgatherv(one_bucket.data(), local_one_size, MPI_INT,
-                       one_recv_buffer.data(), global_one_sizes.data(), one_recv_displs.data(), MPI_INT, comm);
-
-        // Update local data with the received zero bucket data
+        // Redistribute data to maintain equal size per process
         local_data.clear();
-        local_data.insert(local_data.end(), zero_recv_buffer.begin(), zero_recv_buffer.end());
+        local_data.insert(local_data.end(), all_zeros.begin(), all_zeros.end());
+        local_data.insert(local_data.end(), all_ones.begin(), all_ones.end());
 
-        // Append the received one bucket data to local data
-        local_data.insert(local_data.end(), one_recv_buffer.begin(), one_recv_buffer.end());
-
-        // Clear buckets and buffers to free memory
-        zero_bucket.clear();
-        one_bucket.clear();
-        zero_recv_buffer.clear();
-        one_recv_buffer.clear();
+        // Correctly distribute data across processes
+        int total_data_size = local_data.size();
+        int chunk_size = total_data_size / size;
+        int remainder = total_data_size % size;
+        int start_index = rank * chunk_size + std::min(rank, remainder);
+        int end_index = start_index + chunk_size + (rank < remainder ? 1 : 0);
+        local_data = std::vector<int>(local_data.begin() + start_index, local_data.begin() + end_index);
 
         // Synchronize processes before moving to the next bit
         MPI_Barrier(comm);
@@ -146,6 +142,15 @@ void checkSorted(const std::vector<int>& data, int original_size) {
 }
 
 int main(int argc, char *argv[]) {
+    int task_id, num_procs;
+    int array_size;
+    int presorted = 0;
+    if (argc < 3) {
+        printf("\n Please provide the size of the array and then array type\n");
+        return 0;
+    }
+    array_size = atoi(argv[1]);
+    presorted = atoi(argv[2]);
     /* Define Caliper region names */
     const char* main_comp = "main_comp";
     const char* data_init = "data_init_runtime";
@@ -166,27 +171,41 @@ int main(int argc, char *argv[]) {
     adiak::value("algorithm", "radix"); // The name of the algorithm you are using (e.g., "merge", "bitonic")
     adiak::value("programming_model", "mpi"); // e.g. "mpi"
     adiak::value("data_type", "int"); // The datatype of input elements (e.g., double, int, float)
-    adiak::value("size_of_data_type", "4"); // sizeof(datatype) of input elements in bytes (e.g., 1, 2, 4)
-    adiak::value("input_size", "1000"); // The number of elements in input dataset (1000)
-    adiak::value("input_type", "Random"); // For sorting, this would be choices: ("Sorted", "ReverseSorted", "Random", "1_perc_perturbed")
-    adiak::value("num_procs", "2"); // The number of processors (MPI ranks)
+    adiak::value("size_of_data_type", sizeof(int)); // sizeof(datatype) of input elements in bytes (e.g., 1, 2, 4)
+    adiak::value("input_size", array_size); // The number of elements in input dataset (1000)
+
+    switch(presorted){
+      case 0:
+        adiak::value("input_type", "Random"); 
+      break;
+      case 1:
+        adiak::value("input_type", "Sorted");
+      break;
+      case 2:
+        adiak::value("input_type", "ReverseSorted");
+      break;
+      case 3:
+        adiak::value("input_type", "1_perc_perturbed");
+      break;
+      default:
+        adiak::value("input_type", "Random"); // For sorting, this would be choices: ("Sorted", "ReverseSorted", "Random", "1_perc_perturbed")
+    }
+
     adiak::value("scalability", "weak"); // The scalability of your algorithm. choices: ("strong", "weak")
     adiak::value("group_num", "14"); // The number of your group (integer, e.g., 1, 10)
     adiak::value("implementation_source", "online, ai, handwitten"); // Where you got the source code of your algorithm. choices: ("online", "ai", "handwritten").
 
 
-    int task_id, num_procs;
-    int array_size;
-    int presorted = 0;
-    if (argc < 3) {
-        printf("\n Please provide the size of the array and then array type\n");
-        return 0;
-    }
-    array_size = atoi(argv[1]);
-    presorted = atoi(argv[2]);
+
+    cali::ConfigManager mgr;
+    mgr.start();
+
+    CALI_MARK_BEGIN(main_comp);
+
     MPI_Init(&argc, &argv);
     MPI_Comm_rank(MPI_COMM_WORLD, &task_id);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
+    adiak::value("num_procs", num_procs); // The number of processors (MPI ranks)
 
     if (num_procs < 2) {
         if (task_id == MASTER) {
@@ -195,10 +214,7 @@ int main(int argc, char *argv[]) {
         MPI_Finalize();
         return 0;
     }
-    cali::ConfigManager mgr;
-    mgr.start();
 
-    CALI_MARK_BEGIN(main_comp);
     MPI_Comm worker_comm;
     MPI_Comm_split(MPI_COMM_WORLD, task_id == MASTER ? MPI_UNDEFINED : 1, task_id, &worker_comm);
 
@@ -254,7 +270,6 @@ int main(int argc, char *argv[]) {
             MPI_Recv(unsorted_data.data() + offset, recv_length, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
             offset += recv_length;
         }
-
 
         // Write unsorted data to file
         writeDataToFile("unsortedArray.csv", unsorted_data);
