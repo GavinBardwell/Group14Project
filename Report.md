@@ -527,9 +527,15 @@ We collect the following metadata for our implementations: the launch date of th
 Bitonic Sort
 
 ![image](https://github.com/user-attachments/assets/5464bdf0-2fca-4230-b327-68a1ea80e860)
-![image](https://github.com/user-attachments/assets/176a6bd3-a33d-4f5c-96be-048119cc681c)
-![image](https://github.com/user-attachments/assets/776c881d-451e-4e85-aa28-52f9092f645b)
+he main size increase mainly due to the communication requirements.
 
+![image](https://github.com/user-attachments/assets/176a6bd3-a33d-4f5c-96be-048119cc681c)
+It's clear that as we increase the number of processors, the communication requirements increase. This is obvious, as we are increasing the messages sent and received by all processes when we add more processors.
+
+![image](https://github.com/user-attachments/assets/776c881d-451e-4e85-aa28-52f9092f645b)
+The calculation increases slightly as we add more processors, but it's important to note that this includes a section of communication. This means the calculation only increase due to communication increases.
+
+I had a significant amount of trouble generating caliper files for the other graphs; however, the implementation is sound, and the other graphs will be generated quickly moving forward.
 
 Sample Sort
 
