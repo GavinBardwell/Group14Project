@@ -524,8 +524,34 @@ We collect the following metadata for our implementations: the launch date of th
 ### **See the `Builds/` directory to find the correct Caliper configurations to get the performance metrics.** They will show up in the `Thicket.dataframe` when the Caliper file is read into Thicket.
 ## 4. Performance evaluation
 
-Include detailed analysis of computation performance, communication performance. 
-Include figures and explanation of your analysis.
+Bitonic Sort
+
+Sample Sort
+
+Merge Sort
+![image](https://github.com/user-attachments/assets/21118255-0b7c-430b-ae64-293636164e49)
+![image](https://github.com/user-attachments/assets/93c44f81-5b40-4f97-876f-17b24f3af3ec)
+![image](https://github.com/user-attachments/assets/6e5eac42-e1a0-4ec2-a610-6eca85a44399)
+![image](https://github.com/user-attachments/assets/d7f9dbe4-2d71-4680-84ab-fa0eb36ff457)
+![image](https://github.com/user-attachments/assets/ea8392a8-218e-45aa-bda7-ff9e5355d33c)
+![image](https://github.com/user-attachments/assets/3ecc65e4-9ea4-47b6-85f7-677ea3e55c04)
+![image](https://github.com/user-attachments/assets/50b70b16-a146-4775-a951-d12400f99021)
+![image](https://github.com/user-attachments/assets/dddcd6cf-62d9-4fba-b396-b7c5fd5f6f14)
+![image](https://github.com/user-attachments/assets/8a087564-934f-4fef-bf02-0062d4b3b3f6)
+![image](https://github.com/user-attachments/assets/e0bce2e9-d9bb-430f-9487-8419d28cd4f8)
+![image](https://github.com/user-attachments/assets/181bf875-60e4-4b2b-9c93-7dff876a9c1d)
+![image](https://github.com/user-attachments/assets/67c61288-5499-4269-833a-ab90ec312d65)
+![image](https://github.com/user-attachments/assets/d75530aa-f50a-4c53-a483-6ae619ba1301)
+![image](https://github.com/user-attachments/assets/fb903c9e-846b-4dcd-8f2e-66b688f3fdbe)
+![image](https://github.com/user-attachments/assets/7b302f60-c450-4280-8a9d-54c8bb123905)
+![image](https://github.com/user-attachments/assets/cc370d74-85e0-4bab-89ac-c9a1b0b69c76)
+![image](https://github.com/user-attachments/assets/543849ed-215b-4e0c-828c-6a7fc5178269)
+![image](https://github.com/user-attachments/assets/7ee621bf-182f-457f-ace9-f20d63019703)
+![image](https://github.com/user-attachments/assets/a8172ffb-c1b1-40ef-923f-aaa3deac82b5)
+![image](https://github.com/user-attachments/assets/0639a0f8-8d28-4816-9e5d-7aadf10f8e4c)
+![image](https://github.com/user-attachments/assets/ae4f98c4-21c6-47fe-b8d8-ed5dacb4949b)
+
+Radix Sort
 
 ### 4a. Vary the following parameters
 For input_size's:
