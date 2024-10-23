@@ -542,6 +542,11 @@ Merge Sort
 ![image](https://github.com/user-attachments/assets/ea8392a8-218e-45aa-bda7-ff9e5355d33c)
 ![image](https://github.com/user-attachments/assets/3ecc65e4-9ea4-47b6-85f7-677ea3e55c04)
 ![image](https://github.com/user-attachments/assets/50b70b16-a146-4775-a951-d12400f99021)
+
+For main. here appears to be a general trend of increasing time as the number of processes increases until we get to an array size of 2^24. For input sizes of 2^24, 2^26, and 2^28, there appears to be a sudden spike in time at a random number of processes. It then levels out to what it was before. This appears to happen at random for some input types. This pattern is not consistent.
+
+The pattern of increasing time as the number of processes increases is most likely due to increasing communication overhead. As the number of processes increases, more communication needs to happen between the processes. The patter of random spikes in time at random places for different input types is most likely due to congestion as the many processes compete for resources.
+
 ![image](https://github.com/user-attachments/assets/dddcd6cf-62d9-4fba-b396-b7c5fd5f6f14)
 ![image](https://github.com/user-attachments/assets/8a087564-934f-4fef-bf02-0062d4b3b3f6)
 ![image](https://github.com/user-attachments/assets/e0bce2e9-d9bb-430f-9487-8419d28cd4f8)
@@ -549,6 +554,10 @@ Merge Sort
 ![image](https://github.com/user-attachments/assets/67c61288-5499-4269-833a-ab90ec312d65)
 ![image](https://github.com/user-attachments/assets/d75530aa-f50a-4c53-a483-6ae619ba1301)
 ![image](https://github.com/user-attachments/assets/fb903c9e-846b-4dcd-8f2e-66b688f3fdbe)
+
+For comm, there appears to be a random spikes in time at random places for all different input types. This is most likely due to congestion as the many processes compete for resources.
+
+
 ![image](https://github.com/user-attachments/assets/7b302f60-c450-4280-8a9d-54c8bb123905)
 ![image](https://github.com/user-attachments/assets/cc370d74-85e0-4bab-89ac-c9a1b0b69c76)
 ![image](https://github.com/user-attachments/assets/543849ed-215b-4e0c-828c-6a7fc5178269)
@@ -556,6 +565,9 @@ Merge Sort
 ![image](https://github.com/user-attachments/assets/a8172ffb-c1b1-40ef-923f-aaa3deac82b5)
 ![image](https://github.com/user-attachments/assets/0639a0f8-8d28-4816-9e5d-7aadf10f8e4c)
 ![image](https://github.com/user-attachments/assets/ae4f98c4-21c6-47fe-b8d8-ed5dacb4949b)
+
+For comp large, there appears to be a trend of decreasing time as the number of processes increases. This is expected because as the number of processes increases, the workload is distributed across the many processes. Therefore, there is less work for each individual process to compute.
+
 
 Radix Sort
 
