@@ -134,7 +134,15 @@ int main (int argc, char **argv)
   CALI_MARK_END("comm");
   // Local sort using built in qsort function
   CALI_MARK_BEGIN("comp");
-  qsort((char *) originalArrayData, numElements_Bloc, sizeof(int), intComp);
+  if(numElements_Bloc > 100) {
+    CALI_MARK_BEGIN("comp_large");
+    qsort ((char *) originalArrayData, numElements_Bloc, sizeof(int), intComp);
+    CALI_MARK_END("comp_large");
+  } else {
+    CALI_MARK_BEGIN("comp_small");
+    qsort ((char *) originalArrayData, numElements_Bloc, sizeof(int), intComp);
+    CALI_MARK_END("comp_small");
+  }
   CALI_MARK_END("comp");
   // Choose local splitters
   splitter = (int *) malloc (sizeof (int) * (numProcessors-1));
@@ -199,7 +207,15 @@ int main (int argc, char **argv)
   // Sort the local buckets
   numSortElements = localBucket[0];
   CALI_MARK_BEGIN("comp");
-  qsort ((char *) &localBucket[1], numSortElements, sizeof(int), intComp); 
+  if (numSortElements > 100) {
+    CALI_MARK_BEGIN("comp_large");
+    qsort ((char *) &localBucket[1], numSortElements, sizeof(int), intComp);
+    CALI_MARK_END("comp_large"); 
+  } else {
+    CALI_MARK_BEGIN("comp_small");
+    qsort ((char *) &localBucket[1], numSortElements, sizeof(int), intComp); 
+    CALI_MARK_END("comp_small");
+  }
   CALI_MARK_END("comp");
   // Gathering sorted sub blocks to root
   if(worldRank == 0) {
