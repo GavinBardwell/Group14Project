@@ -17,14 +17,23 @@ For primary communication we will utilize a text message group chat.
 of the sequence is swapped and then remerged into a larger portion of the sequence. Only arrays of size 2^n can be sorted.
 - Sample Sort: Sample sort is a divide-and-conquer algorithm similar to how quicksort partitions its input into two parts at each step revolved around a singluar pivot value, but what makes sample sort unique is that it chooses a large amount of pivot values and partitions the rest of the elements on these pivots and sorts all these partitions.
 - Merge Sort: Merge sort is a divide-and-conquer algorithm that sorts an array by splitting the array into halves until each sub-array contains a single element. Each sub-array is then put back together in a sorted order.
-- Radix Sort: Radix sorting is a non-comparative sorting algorithm where numbers are placed into buckets based on singular digits going from least significant to most significant.
+- : ing is a non-comparative sorting algorithm where numbers are placed into buckets based on singular digits going from least significant to most significant.
 
 ### 2b. Pseudocode for each parallel algorithm
 
 - For MPI programs, include MPI calls you will use to coordinate between processes
 
+# Pseudocode for MPI Parallel Bitonic Sort
 - Bitonic Sort Pseudocode
 - Inputs is your global array
+
+1. Seed the array in the parent process
+2. Scatter the values to the processes
+3. Sort each process into a bitonic sequence
+4. Send values between each partner process
+5. Keep swapping until we reach a sorted array
+6. Gather all the process values back into the master
+7. Check for correctness and finalize
 
 ```
 //Bitonic Merge
@@ -97,9 +106,18 @@ main() {
     return 0;
 }
 ```
-
+# Pseudocode for MPI Parallel Sample Sort
 - Sample Sort Pseudocode 
 - Inputs is your global array
+1. Initialize MPI
+2. Sample n * k elements from the unsorted array
+3. Share these samples with every processor
+4. Sort the samples and select k-th, 2*k-th, 3*k-th...n*k-th as pivots
+5. Split the data into buckets according to pivots
+6. Send each bucket to their respective processor
+7. Sort each bucket in parallel
+8. Gather all the sorted buckets merging at the root processor
+9. Finalize MPI
 
 ```
 main () {
@@ -157,10 +175,16 @@ main () {
     MPI_Finalize();
 }
 ```
-```
 
+# Pseudocode for MPI Parallel Merge Sort
 - Merge Sort Pseudocode
 - Inputs is your global array
+1. Initialize MPI
+2. Divide the array evenly among processes
+3. Perform sequential merge sort on subarray on each process
+4. Gather subarrays at the root process
+5. Perform merge sort on combined array
+6. Finalize MPI
 
 ```
 main() {
@@ -265,66 +289,146 @@ merge(arr, left, mid, right) {
 }
 ```
 
-- Radix Sort Pseudocode
-- Inputs is your global array
 
+# Pseudocode for MPI Parallel 
+-  Pseudocode
+- Inputs is your global array size, number of processes, and type of sorting
+the algorithm goes as such
+1. Generate your data in each thread
+- this is then sent to the master where it writes it to "unSortedArray.csv"
+2. perform 
+- seperate each thread into buckets of bits 1s and 0s
+- send the 0s to the top and 1s after that
+- repeat with the next bit
+- send to the master thread
+3. Verify that the  worked
+- this is done in the master thread
+4. write the sorted data to "sortedArray.csv"
+## Main Function
 ```
 main() {
-// Initialize MPI
-MPI_Init(&argc, &argv);
+    // Initialize MPI environment
+    MPI_Init();
 
-// Get number of processes and the current rank
-MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    // Variables to track rank and number of processes
+    int task_id;
+    int num_procs;
 
-// Total number of elements in the array
-total_elements = get_total_elements();
+    // Get current process rank
+    MPI_Comm_rank(MPI_COMM_WORLD, &task_id);
 
-// Calculate the number of elements each process will handle
-elements_per_proc = total_elements / num_procs;
+    // Get total number of processes
+    MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
-// Scatter the input array to each process
-MPI_Scatter(global_array, elements_per_proc, MPI_INT, local_array, elements_per_proc, MPI_INT, root, MPI_COMM_WORLD);
+    // If task is master
+    if (task_id == MASTER) {
+        // Distribute data among workers
+        for each worker (i from 1 to num_procs - 1) {
+            // Calculate data chunk size and send data
+            MPI_Send(data_chunk, size, MPI_INT, i, 0, MPI_COMM_WORLD);
+        }
 
-// Get the maximum number to determine the number of digits (if rank 0)
-if (rank == 0) {
-    max_value = find_max(global_array);
-}
+        // Receive unsorted data from workers and write to file
+        for each worker (i from 1 to num_procs - 1) {
+            MPI_Recv(unsorted_data, size, MPI_INT, i, 1, MPI_COMM_WORLD, &status);
+            writeDataToFile("unsortedArray.csv", unsorted_data);
+        }
 
-// Broadcast the max_value to all processes
-MPI_Bcast(&max_value, 1, MPI_INT, root, MPI_COMM_WORLD);
+        // Receive sorted data from workers and write to file
+        for each worker (i from 1 to num_procs - 1) {
+            MPI_Recv(sorted_data, size, MPI_INT, i, 2, MPI_COMM_WORLD, &status);
+            writeDataToFile("sortedArray.csv", sorted_data);
+        }
 
-// Calculate the number of digits in the maximum value
-num_digits = calculate_num_digits(max_value);
+        // Check if sorted correctly
+        checkSorted(sorted_data);
+    }
+    else {
+        // Receive data from master
+        MPI_Recv(local_data, size, MPI_INT, MASTER, 0, MPI_COMM_WORLD, &status);
 
-for (digit = 0; digit < num_digits; digit++) {
-    // Each process performs a counting sort on its local data for the current digit
-    local_count = counting_sort_on_digit(local_array, digit);
+        // Perform  on local data
+        parallel_radix_sort(local_data, max_bits, MPI_COMM_WORLD);
 
-    // Gather all the local arrays at root (process 0)
-    MPI_Gather(local_array, elements_per_proc, MPI_INT, global_array, elements_per_proc, MPI_INT, root, MPI_COMM_WORLD);
+        // Send unsorted data to master
+        MPI_Send(local_data, size, MPI_INT, MASTER, 1, MPI_COMM_WORLD);
 
-    if (rank == 0) {
-        // Process 0 performs a global sort based on the gathered data
-        global_count = counting_sort_on_digit(global_array, digit);
+        // Send sorted data to master
+        MPI_Send(local_data, size, MPI_INT, MASTER, 2, MPI_COMM_WORLD);
     }
 
-    // Broadcast the globally sorted array back to all processes for the next digit iteration
-    MPI_Bcast(global_array, total_elements, MPI_INT, root, MPI_COMM_WORLD);
-
-    // Scatter the globally sorted array back to local arrays
-    MPI_Scatter(global_array, elements_per_proc, MPI_INT, local_array, elements_per_proc, MPI_INT, root, MPI_COMM_WORLD);
-}
-
-// After all digits are processed, process 0 has the fully sorted array
-if (rank == 0) {
-    print_sorted_array(global_array);
-}
-
-// Finalize MPI
-MPI_Finalize();
+    // Finalize MPI environment
+    MPI_Finalize();
 }
 ```
+
+##  Function
+```
+parallel_radix_sort(local_data, max_bits, comm) {
+    // Iterate over each bit from least significant to most significant
+    for bit from 0 to max_bits - 1 {
+        // Split data into zero and one buckets based on current bit
+        zero_bucket = elements with bit 0;
+        one_bucket = elements with bit 1;
+
+        // Gather sizes of zero buckets from all processes
+        MPI_Allgather(size of zero_bucket, global_zero_sizes);
+
+        // Calculate displacements for gathering zero bucket data
+        calculate_displacements(global_zero_sizes, zero_recv_displs);
+
+        // Gather all zero bucket data from processes
+        MPI_Allgatherv(zero_bucket, global_zero_sizes, zero_recv_displs, zero_recv_buffer);
+
+        // Gather sizes of one buckets from all processes
+        MPI_Allgather(size of one_bucket, global_one_sizes);
+
+        // Calculate displacements for gathering one bucket data
+        calculate_displacements(global_one_sizes, one_recv_displs);
+
+        // Gather all one bucket data from processes
+        MPI_Allgatherv(one_bucket, global_one_sizes, one_recv_displs, one_recv_buffer);
+
+        // Merge zero and one buckets to update local data
+        local_data = zero_recv_buffer + one_recv_buffer;
+
+        // Synchronize all processes before moving to next bit
+        MPI_Barrier(comm);
+    }
+}
+```
+
+##  Helper Functions
+### `checkSorted(data)`
+```
+checkSorted(data) {
+    // Iterate through data to verify sorting
+    for i from 1 to size of data - 1 {
+        if data[i] < data[i - 1] {
+            print "Array is NOT sorted correctly.";
+            return;
+        }
+    }
+    print "Array is sorted correctly.";
+}
+```
+### `writeDataToFile(filename, data)`
+```
+writeDataToFile(filename, data) {
+    // Open file in write mode
+    open file with name filename;
+    
+    // Write each element of data to file
+    for element in data {
+        write element to file;
+    }
+    
+    // Close the file
+    close file;
+}
+```
+
+
 
 
 
@@ -395,7 +499,7 @@ Merge Sort
 └─ 0.000 MPI_Comm_dup
 ```
 
-Radix Sort 
+ 
 ```
 0.349 main_comp
 ├─ 0.000 MPI_Comm_free
@@ -416,3 +520,119 @@ Radix Sort
 ### 3b. Collect Metadata
 
 We collect the following metadata for our implementations: the launch date of the job, the libraries used, the command line used to launch the job, the name of the cluster, the name of the algorithm you are using, the programming model, he datatype of input elements, the size of the datatype, the number of elements in input dataset, the input type of array, the number of processors, the scalability of our algorithms, the number of your group, and where we got the source code of our algorithm.
+
+### **See the `Builds/` directory to find the correct Caliper configurations to get the performance metrics.** They will show up in the `Thicket.dataframe` when the Caliper file is read into Thicket.
+## 4. Performance evaluation
+
+Bitonic Sort
+
+![image](https://github.com/user-attachments/assets/5464bdf0-2fca-4230-b327-68a1ea80e860)
+he main size increase mainly due to the communication requirements.
+
+![image](https://github.com/user-attachments/assets/176a6bd3-a33d-4f5c-96be-048119cc681c)
+It's clear that as we increase the number of processors, the communication requirements increase. This is obvious, as we are increasing the messages sent and received by all processes when we add more processors.
+
+![image](https://github.com/user-attachments/assets/776c881d-451e-4e85-aa28-52f9092f645b)
+The calculation increases slightly as we add more processors, but it's important to note that this includes a section of communication. This means the calculation only increase due to communication increases.
+
+I had a significant amount of trouble generating caliper files for the other graphs; however, the implementation is sound, and the other graphs will be generated quickly moving forward.
+
+Sample Sort
+![image](https://github.com/user-attachments/assets/b3536b67-39d5-4489-aa98-0ace6313c4c3)
+Looking at this main graph, it is clear that a sorted array drastically increases the time of the sort in comparison to a random array.
+![image](https://github.com/user-attachments/assets/3f7280c2-6d87-4d61-a948-05d94a01ce1f)
+For the comm graph, it stays pretty consistent times in the different array types. This is likely just due to the low amount of processors so they don't have to compete for resources.
+![image](https://github.com/user-attachments/assets/a84480b7-4608-437f-982e-c7159fbec546)
+
+![image](https://github.com/user-attachments/assets/a1875e8f-824d-4eb0-b566-6905d90b08fb)
+
+![image](https://github.com/user-attachments/assets/53a47842-7e8d-40b2-80a3-b79c76172d49)
+
+For the small computation regions, it seems like the time is just barely larger when an array is sorted in comparison to random, but in the large computation region this is flipped and the time is barely larger when the array is random.
+Merge Sort
+
+![image](https://github.com/user-attachments/assets/21118255-0b7c-430b-ae64-293636164e49)
+![image](https://github.com/user-attachments/assets/93c44f81-5b40-4f97-876f-17b24f3af3ec)
+![image](https://github.com/user-attachments/assets/6e5eac42-e1a0-4ec2-a610-6eca85a44399)
+![image](https://github.com/user-attachments/assets/d7f9dbe4-2d71-4680-84ab-fa0eb36ff457)
+![image](https://github.com/user-attachments/assets/ea8392a8-218e-45aa-bda7-ff9e5355d33c)
+![image](https://github.com/user-attachments/assets/3ecc65e4-9ea4-47b6-85f7-677ea3e55c04)
+![image](https://github.com/user-attachments/assets/50b70b16-a146-4775-a951-d12400f99021)
+
+For main. here appears to be a general trend of increasing time as the number of processes increases until we get to an array size of 2^24. For input sizes of 2^24, 2^26, and 2^28, there appears to be a sudden spike in time at a random number of processes. It then levels out to what it was before. This appears to happen at random for some input types. This pattern is not consistent.
+
+The pattern of increasing time as the number of processes increases is most likely due to increasing communication overhead. As the number of processes increases, more communication needs to happen between the processes. The patter of random spikes in time at random places for different input types is most likely due to congestion as the many processes compete for resources.
+
+![image](https://github.com/user-attachments/assets/dddcd6cf-62d9-4fba-b396-b7c5fd5f6f14)
+![image](https://github.com/user-attachments/assets/8a087564-934f-4fef-bf02-0062d4b3b3f6)
+![image](https://github.com/user-attachments/assets/e0bce2e9-d9bb-430f-9487-8419d28cd4f8)
+![image](https://github.com/user-attachments/assets/181bf875-60e4-4b2b-9c93-7dff876a9c1d)
+![image](https://github.com/user-attachments/assets/67c61288-5499-4269-833a-ab90ec312d65)
+![image](https://github.com/user-attachments/assets/d75530aa-f50a-4c53-a483-6ae619ba1301)
+![image](https://github.com/user-attachments/assets/fb903c9e-846b-4dcd-8f2e-66b688f3fdbe)
+
+For comm, there appears to be a random spikes in time at random places for all different input types. This is most likely due to congestion as the many processes compete for resources.
+
+
+![image](https://github.com/user-attachments/assets/7b302f60-c450-4280-8a9d-54c8bb123905)
+![image](https://github.com/user-attachments/assets/cc370d74-85e0-4bab-89ac-c9a1b0b69c76)
+![image](https://github.com/user-attachments/assets/543849ed-215b-4e0c-828c-6a7fc5178269)
+![image](https://github.com/user-attachments/assets/7ee621bf-182f-457f-ace9-f20d63019703)
+![image](https://github.com/user-attachments/assets/a8172ffb-c1b1-40ef-923f-aaa3deac82b5)
+![image](https://github.com/user-attachments/assets/0639a0f8-8d28-4816-9e5d-7aadf10f8e4c)
+![image](https://github.com/user-attachments/assets/ae4f98c4-21c6-47fe-b8d8-ed5dacb4949b)
+
+For comp large, there appears to be a trend of decreasing time as the number of processes increases. This is expected because as the number of processes increases, the workload is distributed across the many processes. Therefore, there is less work for each individual process to compute.
+
+
+Radix Sort
+Currently there are issues regarding the metadata that has made analysis extremely difficult. This comes from a mislabeling of the number of processors and matrix size. Radix sort has ran 210/280 of the needed files with most errors coming at the 2^26 and 2^28 inputs and at the 512 and 1024 processor size. This shows that is room for improvement on networking and optomization of parameters. There is not enough communication being done and there is too much of a reliance on the master process.
+### 4a. Vary the following parameters
+For input_size's:
+- 2^16, 2^18, 2^20, 2^22, 2^24, 2^26, 2^28
+
+For input_type's:
+- Sorted, Random, Reverse sorted, 1%perturbed
+
+MPI: num_procs:
+- 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024
+
+This should result in 4x7x10=280 Caliper files for your MPI experiments.
+
+### 4b. Hints for performance analysis
+
+To automate running a set of experiments, parameterize your program.
+
+- input_type: "Sorted" could generate a sorted input to pass into your algorithms
+- algorithm: You can have a switch statement that calls the different algorithms and sets the Adiak variables accordingly
+- num_procs: How many MPI ranks you are using
+
+When your program works with these parameters, you can write a shell script 
+that will run a for loop over the parameters above (e.g., on 64 processors, 
+perform runs that invoke algorithm2 for Sorted, ReverseSorted, and Random data).  
+
+### 4c. You should measure the following performance metrics
+- `Time`
+    - Min time/rank
+    - Max time/rank
+    - Avg time/rank
+    - Total time
+    - Variance time/rank
+
+
+## 5. Presentation
+Plots for the presentation should be as follows:
+- For each implementation:
+    - For each of comp_large, comm, and main:
+        - Strong scaling plots for each input_size with lines for input_type (7 plots - 4 lines each)
+        - Strong scaling speedup plot for each input_type (4 plots)
+        - Weak scaling plots for each input_type (4 plots)
+
+Analyze these plots and choose a subset to present and explain in your presentation.
+
+## 6. Final Report
+Submit a zip named `TeamX.zip` where `X` is your team number. The zip should contain the following files:
+- Algorithms: Directory of source code of your algorithms.
+- Data: All `.cali` files used to generate the plots seperated by algorithm/implementation.
+- Jupyter notebook: The Jupyter notebook(s) used to generate the plots for the report.
+- Report.md
