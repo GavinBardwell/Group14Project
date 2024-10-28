@@ -549,6 +549,8 @@ For the comm graph, it stays pretty consistent times in the different array type
 ![image](https://github.com/user-attachments/assets/53a47842-7e8d-40b2-80a3-b79c76172d49)
 
 For the small computation regions, it seems like the time is just barely larger when an array is sorted in comparison to random, but in the large computation region this is flipped and the time is barely larger when the array is random.
+
+
 Merge Sort
 
 ![image](https://github.com/user-attachments/assets/21118255-0b7c-430b-ae64-293636164e49)
@@ -583,6 +585,39 @@ For comm, there appears to be a random spikes in time at random places for all d
 ![image](https://github.com/user-attachments/assets/ae4f98c4-21c6-47fe-b8d8-ed5dacb4949b)
 
 For comp large, there appears to be a trend of decreasing time as the number of processes increases. This is expected because as the number of processes increases, the workload is distributed across the many processes. Therefore, there is less work for each individual process to compute.
+
+![image](https://github.com/user-attachments/assets/9a9e899d-f441-4829-b369-697c05e17a31)
+![image](https://github.com/user-attachments/assets/e3f80bbb-d225-43a8-83e6-d75988d4f730)
+![image](https://github.com/user-attachments/assets/c93af298-3b73-4880-87cc-0238c27f08e3)
+![image](https://github.com/user-attachments/assets/60627f6a-b059-4f0f-94cd-849666247e47)
+![image](https://github.com/user-attachments/assets/031d9c64-29bb-4af0-86a7-23a1dd3d68a0)
+![image](https://github.com/user-attachments/assets/5d048f4e-9834-4fcd-9c5d-1acc31627ec6)
+![image](https://github.com/user-attachments/assets/4d23ddb0-8237-48a1-8fe0-1384d001cfae)
+
+
+![image](https://github.com/user-attachments/assets/56ce6662-9e7f-40a7-82f8-979b62cced6b)
+![image](https://github.com/user-attachments/assets/f3cdd5f2-f353-4c55-adb4-889b8cbaee67)
+![image](https://github.com/user-attachments/assets/468378f4-6bfa-4f38-be1d-cb4e98b62adf)
+![image](https://github.com/user-attachments/assets/1f7b13b5-b29b-4b88-9877-7efd06852abf)
+![image](https://github.com/user-attachments/assets/ddd3ad14-bdd9-4c4c-9bc6-6f31a6b9c5aa)
+![image](https://github.com/user-attachments/assets/b130834c-065a-485a-9415-be7940d2b9ae)
+![image](https://github.com/user-attachments/assets/c1e44a61-d5bf-4298-9b8d-00577e43cddf)
+
+
+![image](https://github.com/user-attachments/assets/33b45563-bad7-4c99-8055-177814a088a0)
+![image](https://github.com/user-attachments/assets/420f6eaa-c616-44cf-bc25-986ccb79cf91)
+![image](https://github.com/user-attachments/assets/a23bc927-2d2a-42e2-9a04-1b30ec210006)
+![image](https://github.com/user-attachments/assets/55c48852-f4ab-49a6-879b-99192e886194)
+![image](https://github.com/user-attachments/assets/bee5c557-caa2-4b45-a6a5-60ced4dd9d3e)
+![image](https://github.com/user-attachments/assets/3d4b3978-5289-4d26-9dd4-8855b3dd9ec3)
+![image](https://github.com/user-attachments/assets/d35f1ef2-66d3-4561-881b-eaf9a7fb9d8c)
+
+
+![image](https://github.com/user-attachments/assets/3c92a664-66e8-48d9-a628-8c6f5dc1ccca)
+![image](https://github.com/user-attachments/assets/be8b0cbe-53f6-4495-87ef-ae3187c6d3ab)
+![image](https://github.com/user-attachments/assets/c995de7d-ee8d-4fda-97dc-d55846849f1a)
+
+
 
 
 Radix Sort
