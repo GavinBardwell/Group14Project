@@ -561,7 +561,7 @@ For the small computation regions, it seems like the time is just barely larger 
 ![image](https://github.com/user-attachments/assets/3ecc65e4-9ea4-47b6-85f7-677ea3e55c04)
 ![image](https://github.com/user-attachments/assets/50b70b16-a146-4775-a951-d12400f99021)
 
-For main. here appears to be a general trend of increasing time as the number of processes increases until we get to an array size of 2^24. For input sizes of 2^24, 2^26, and 2^28, there appears to be a sudden spike in time at a random number of processes. It then levels out to what it was before. This appears to happen at random for some input types. This pattern is not consistent.
+For main strong scaling, there appears to be a general trend of increasing time as the number of processes increases until we get to an array size of 2^24. For input sizes of 2^24, 2^26, and 2^28, there appears to be a sudden spike in time at a random number of processes. It then levels out to what it was before. This appears to happen at random for some input types. This pattern is not consistent.
 
 The pattern of increasing time as the number of processes increases is most likely due to increasing communication overhead. As the number of processes increases, more communication needs to happen between the processes. The patter of random spikes in time at random places for different input types is most likely due to congestion as the many processes compete for resources.
 
@@ -573,7 +573,7 @@ The pattern of increasing time as the number of processes increases is most like
 ![image](https://github.com/user-attachments/assets/d75530aa-f50a-4c53-a483-6ae619ba1301)
 ![image](https://github.com/user-attachments/assets/fb903c9e-846b-4dcd-8f2e-66b688f3fdbe)
 
-For comm, there appears to be a random spikes in time at random places for all different input types. This is most likely due to congestion as the many processes compete for resources.
+For comm strong scaling, there appears to be a random spikes in time at random places for all different input types. This is most likely due to congestion as the many processes compete for resources. These random spikes are likely nondeterministic.
 
 
 ![image](https://github.com/user-attachments/assets/7b302f60-c450-4280-8a9d-54c8bb123905)
@@ -584,7 +584,7 @@ For comm, there appears to be a random spikes in time at random places for all d
 ![image](https://github.com/user-attachments/assets/0639a0f8-8d28-4816-9e5d-7aadf10f8e4c)
 ![image](https://github.com/user-attachments/assets/ae4f98c4-21c6-47fe-b8d8-ed5dacb4949b)
 
-For comp large, there appears to be a trend of decreasing time as the number of processes increases. This is expected because as the number of processes increases, the workload is distributed across the many processes. Therefore, there is less work for each individual process to compute.
+For comp large strong scaling, there appears to be a trend of decreasing time as the number of processes increases. This is expected because as the number of processes increases, the workload is distributed across the many processes. Therefore, there is less work for each individual process to compute.
 
 ![image](https://github.com/user-attachments/assets/9a9e899d-f441-4829-b369-697c05e17a31)
 ![image](https://github.com/user-attachments/assets/e3f80bbb-d225-43a8-83e6-d75988d4f730)
@@ -594,6 +594,7 @@ For comp large, there appears to be a trend of decreasing time as the number of 
 ![image](https://github.com/user-attachments/assets/5d048f4e-9834-4fcd-9c5d-1acc31627ec6)
 ![image](https://github.com/user-attachments/assets/4d23ddb0-8237-48a1-8fe0-1384d001cfae)
 
+For main strong scaling speed up, sequential merge sort seems faster for smaller input sizes. This is likely due to communication overhead. At the end of merge sort in parallel, all of the processes send their individual subarrays back to the master process, then one final merge sort must be performed. The cost of the individual processes communicating with each other does not justify doing merge sort in parallel for smaller input sizes. Specifically, we start seeing an improvement from doing merge sort in parallel at an input size of 2^24, but it becomes very clear that there is an improvement from performing merge in parallel with an input size of 2^28.
 
 ![image](https://github.com/user-attachments/assets/56ce6662-9e7f-40a7-82f8-979b62cced6b)
 ![image](https://github.com/user-attachments/assets/f3cdd5f2-f353-4c55-adb4-889b8cbaee67)
