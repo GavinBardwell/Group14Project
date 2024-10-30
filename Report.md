@@ -526,16 +526,109 @@ We collect the following metadata for our implementations: the launch date of th
 
 **Bitonic Sort**
 
-![image](https://github.com/user-attachments/assets/5464bdf0-2fca-4230-b327-68a1ea80e860)
-he main size increase mainly due to the communication requirements.
+![image](https://github.com/user-attachments/assets/ee269bf6-8b71-43b7-a66e-11b986a33fd1)
+![image](https://github.com/user-attachments/assets/03d35489-846b-4e3a-8231-98a8fee0bee3)
+![image](https://github.com/user-attachments/assets/115add6e-1164-4a26-ad38-82fa72952661)
+![image](https://github.com/user-attachments/assets/cb794724-9d5e-4af1-acc1-0f09dd4f3b9f)
+![image](https://github.com/user-attachments/assets/9d1d5ec6-513b-4a53-88c0-a3c8d1a3b739)
+![image](https://github.com/user-attachments/assets/706f8156-ad30-4f8b-9b1c-20861fcc73dc)
+![image](https://github.com/user-attachments/assets/416642dc-c2d6-4a65-8ab6-f933454b3d55)
 
-![image](https://github.com/user-attachments/assets/176a6bd3-a33d-4f5c-96be-048119cc681c)
-It's clear that as we increase the number of processors, the communication requirements increase. This is obvious, as we are increasing the messages sent and received by all processes when we add more processors.
+The communication graphs effectively show the power of parallelizing a bitnoic sort on more and more processors. As we increase the number
+of processors, the communication time decreases. Although we are increasing the number of messages sent, we are decreasing the amount of
+data sent between each message. This causes a noticeable amount of speedup as we add more processors. There is data missing here, but I don't
+believe the runs failing was caused by the main communication portion of the algorithm. It's also worth mentioning that on the smaller input
+sizes the communication overhead caused by more processors was enough to increase the overall communication time.
 
-![image](https://github.com/user-attachments/assets/776c881d-451e-4e85-aa28-52f9092f645b)
-The calculation increases slightly as we add more processors, but it's important to note that this includes a section of communication. This means the calculation only increase due to communication increases.
+![image](https://github.com/user-attachments/assets/3bf6cacb-d2aa-46e8-81ef-41375173025d)
+![image](https://github.com/user-attachments/assets/e233c95f-a024-43cf-b648-38ce27adc034)
+![image](https://github.com/user-attachments/assets/1b4ddc46-e007-4911-a81a-3db9bdcf4bd4)
+![image](https://github.com/user-attachments/assets/46ca1c32-0e31-49f3-a4f6-87d63d167f43)
+![image](https://github.com/user-attachments/assets/d735f123-213d-4933-a8b5-2f66b5220bbb)
+![image](https://github.com/user-attachments/assets/bf70089f-043e-4f0d-b6cc-a3fbe630d3fc)
+![image](https://github.com/user-attachments/assets/7153ea4b-5c3b-4bdd-9f3e-e78516f5a63d)
 
-I had a significant amount of trouble generating caliper files for the other graphs; however, the implementation is sound, and the other graphs will be generated quickly moving forward.
+One thing to note about these graphs is that I had a smaller communication region nested within the computation portion of my algorithm. This
+caused the smaller input sizes to actually increase in computation time as we added more processors similar to the starting communication graphs.
+However, for all the other input sizes, the graph decreases in computation time as we add more processors.
+
+![image](https://github.com/user-attachments/assets/c1c8ccfe-03e4-4d36-8b83-293de94481bc)
+![image](https://github.com/user-attachments/assets/6fb19de7-8d13-465e-b542-39b1b944ade5)
+![image](https://github.com/user-attachments/assets/e5c4d14e-4c91-4579-9bd2-b5e2d85da1c4)
+![image](https://github.com/user-attachments/assets/c3c01c48-3769-4807-aeca-9b5464cc7417)
+![image](https://github.com/user-attachments/assets/143cf0c3-0a6a-4a4a-b42b-e6464e09a7f8)
+![image](https://github.com/user-attachments/assets/04442fc4-2938-4384-8e75-7c3fa560c053)
+![image](https://github.com/user-attachments/assets/6746f2c2-308f-490c-ad4b-f4712edbee3e)
+
+These are the communication region inside of the large computation section. They stay fairly constant and are slightly increased by the
+large input sizes due to more data being sent. Overall, they remain low though.
+
+![image](https://github.com/user-attachments/assets/66bb05d0-50f6-4247-8126-ba74349e7257)
+![image](https://github.com/user-attachments/assets/d7236449-04fd-41c6-b6fa-67b644b1f28e)
+![image](https://github.com/user-attachments/assets/8d94ac61-4b71-403e-867f-9e4227a31054)
+![image](https://github.com/user-attachments/assets/6669b6fb-018d-4d60-bcd6-d912d0812520)
+![image](https://github.com/user-attachments/assets/1e31f04d-369f-4db6-b57f-638ebcfb1053)
+![image](https://github.com/user-attachments/assets/f20ba64a-f8f7-4620-8bf5-8e513b8da3a3)
+![image](https://github.com/user-attachments/assets/05f64c95-3a44-4847-86d9-fd85d49d30d5)
+
+When looking at the main speedup, you'll notice that the speedup started by decreasing on the smaller input sizes and then begin slowly
+increasing as the we started using larger and large input sizes. The decreasing on the smaller input sizes was definitely caused by
+communication overhead caused by the larger number of processors. Eventually, the program time got so long that the speedup caused by having
+more processors outweighed the communication overhead. Therefore, the speedup slowly began increasing with input size increases.
+
+![image](https://github.com/user-attachments/assets/0d8511de-dca7-4c64-b7b7-52c11da59091)
+![image](https://github.com/user-attachments/assets/a7dd837b-9329-4920-8125-2eb333a34621)
+![image](https://github.com/user-attachments/assets/5f4552ee-448a-4d79-a8f0-9486735340c0)
+![image](https://github.com/user-attachments/assets/32df3ffe-5cee-4549-a8e9-ac00a3585448)
+![image](https://github.com/user-attachments/assets/cda3a841-50fc-47c5-9d5a-51ca70c1fcfd)
+![image](https://github.com/user-attachments/assets/ec22205a-0acf-4d74-8229-86ce561cedfe)
+![image](https://github.com/user-attachments/assets/9d6126a8-d334-4a45-a22a-7f68393ed352)
+
+Communication experiences a very similar speedup as to the main program speedup. At the beginning, the overhead caused by more processors
+slowed it down, but with higher input sizes, it bagan experiencing rapid speedup.
+
+![image](https://github.com/user-attachments/assets/f08425b0-d193-432a-9e5f-c8a5afa803f6)
+![image](https://github.com/user-attachments/assets/629ec2cf-12ae-489f-8aea-4a5798b85fc4)
+![image](https://github.com/user-attachments/assets/b5f5359e-a82f-417e-a561-273d1e187089)
+![image](https://github.com/user-attachments/assets/1586bded-c537-431b-b043-d5f3a08394aa)
+![image](https://github.com/user-attachments/assets/b5926c3b-7226-493c-baa5-d5494b184990)
+![image](https://github.com/user-attachments/assets/d75781f9-78f1-4801-ad26-7ba4f993b374)
+![image](https://github.com/user-attachments/assets/2eaa48cb-0ee5-4a75-8af9-a6367f6e10ac)
+
+Once again, the large computation section experienced slow down on the smaller input sizes. This is likely due to communication overhead.
+However, there was a significant amount of speedup as we added more processors to the large input sizes. Even though we are missing some data
+in the biggest input sizes, I believe that the speedup would have either continued. There may have been a point at which it plateaued, but
+the data I do have shows significant speedup up to the processor sizes the did run.
+
+![image](https://github.com/user-attachments/assets/f4b2e929-6f8b-4f8a-b5ff-6e70915ce0ff)
+![image](https://github.com/user-attachments/assets/cfb2e3c2-40cd-4128-8eca-85d0280f7814)
+![image](https://github.com/user-attachments/assets/c6eee448-914c-4cfe-a6cf-819f21b58f71)
+![image](https://github.com/user-attachments/assets/69423de5-75f8-49af-aa35-d3c62d6d0bcb)
+![image](https://github.com/user-attachments/assets/de1580a1-df2f-4e3c-bc12-8bd799b9ec8a)
+![image](https://github.com/user-attachments/assets/7e703b98-5b17-47ed-8e83-653570819206)
+![image](https://github.com/user-attachments/assets/d4fa34a3-b764-4a5d-837e-13869c9a24a6)
+
+Finally, the nested communication region is the same pattern once again. No speedup on the smaller input sizes due to communication overhead,
+then significant speedup on the higher input sizes.
+
+![image](https://github.com/user-attachments/assets/de3c6d34-b58e-45b0-b7e7-853761681fd2)
+![image](https://github.com/user-attachments/assets/9d7275cb-cf3d-473f-88f4-902189225534)
+![image](https://github.com/user-attachments/assets/afaae7e3-5cad-4b7b-80c0-746611cce6bf)
+![image](https://github.com/user-attachments/assets/981fde14-2974-46ad-9e55-5e19d3c0372b)
+
+For all 4 of the weak scaling plots, we see decreases in time across the board. Execution time starts high on the smaller number of processors,
+but as we add more and more, the time gets lower and lower. One thing to notice is that there appears to be a certain point at which the 
+execution time does not get any lower. For all of the graphs, that appears to be at 64 processors. This could be a limitation of my
+algorithm implementation, or the bitonic sort itself. It's possible that with even higher input sizes, we still would have been able to
+see decreases in execution time past 64 processors.
+
+One thing you may have noticed throughout all the graphs was the missing data points on the higher input sizes. I was only able to
+create 209 Caliper files from my algorithm, simply because a lot of the large input sizes did not finish running in reasonable amount of time.
+I hardcapped every run of the algorithm at 30 minutes, so it's possible they would have finished with more time. I know this was most likely a
+problem with my implementation. This could have been a problem with my large computation section although I find that unlikely. The one thing
+I believe it to be was my correctness check at the end. After I finish computing the sort, I used an MPI_Gather to grab all the elements back
+to the master to check the correctness of the array. I believe this is what caused so many of my runs to time out. Running a 2^28 array sequentially just takes too much time, and the communication overhead to do so may have caused issues.
+
 
 **Sample Sort**
 ![image](https://github.com/user-attachments/assets/b3536b67-39d5-4489-aa98-0ace6313c4c3)
