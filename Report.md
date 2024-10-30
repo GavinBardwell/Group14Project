@@ -617,7 +617,11 @@ For comm strong scaling speed up, a decreasing speed up graph is expected. This 
 For comp large strong scaling speed up, all of the graphs are increasing for each input size. This is because the work is divided evenly among the many processes. For a single process, the computation time depends mostly on the input size. If the work is divided among more processes, the work load for each individual process is less. This decreases the overall computation time for each process since each process is working with a smaller subarray. This is what results in the increasing graph as the number of processes increases.
 
 ![image](https://github.com/user-attachments/assets/3c92a664-66e8-48d9-a628-8c6f5dc1ccca)
+For main weak scaling, the graph appears to be relatively constant. This suggests that merge sort scales well with an increasing workload. Each process handles its portion of the workload without significant overhead.
+
 ![image](https://github.com/user-attachments/assets/be8b0cbe-53f6-4495-87ef-ae3187c6d3ab)
+For comm weak scaling, the increasing graph as the number of processes increases and the input size increases suggests that the communication overhead is also growing, interfering with the overall execution time of the merge sort algorithm. However, with a slighly logarithmic curve, this will likely become less of a problem for input sizes greater than 2^28.
+
 ![image](https://github.com/user-attachments/assets/c995de7d-ee8d-4fda-97dc-d55846849f1a)
 
 
