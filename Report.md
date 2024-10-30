@@ -623,7 +623,7 @@ For main weak scaling, the graph appears to be relatively constant. This suggest
 For comm weak scaling, the increasing graph as the number of processes increases and the input size increases suggests that the communication overhead is also growing, interfering with the overall execution time of the merge sort algorithm. However, with a slighly logarithmic curve, this will likely become less of a problem for input sizes greater than 2^28.
 
 ![image](https://github.com/user-attachments/assets/c995de7d-ee8d-4fda-97dc-d55846849f1a)
-
+For comp large weak scaling, the graph appears to be decreasing. This suggests that there is efficient workload distribution, resulting in less work for each process as we increase the number of processes and input size.
 
 
 
