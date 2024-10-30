@@ -524,7 +524,7 @@ We collect the following metadata for our implementations: the launch date of th
 ### **See the `Builds/` directory to find the correct Caliper configurations to get the performance metrics.** They will show up in the `Thicket.dataframe` when the Caliper file is read into Thicket.
 ## 4. Performance evaluation
 
-Bitonic Sort
+**Bitonic Sort**
 
 ![image](https://github.com/user-attachments/assets/5464bdf0-2fca-4230-b327-68a1ea80e860)
 he main size increase mainly due to the communication requirements.
@@ -537,7 +537,7 @@ The calculation increases slightly as we add more processors, but it's important
 
 I had a significant amount of trouble generating caliper files for the other graphs; however, the implementation is sound, and the other graphs will be generated quickly moving forward.
 
-Sample Sort
+**Sample Sort**
 ![image](https://github.com/user-attachments/assets/b3536b67-39d5-4489-aa98-0ace6313c4c3)
 Looking at this main graph, it is clear that a sorted array drastically increases the time of the sort in comparison to a random array.
 ![image](https://github.com/user-attachments/assets/3f7280c2-6d87-4d61-a948-05d94a01ce1f)
@@ -551,7 +551,7 @@ For the comm graph, it stays pretty consistent times in the different array type
 For the small computation regions, it seems like the time is just barely larger when an array is sorted in comparison to random, but in the large computation region this is flipped and the time is barely larger when the array is random.
 
 
-Merge Sort
+**Merge Sort**
 
 ![image](https://github.com/user-attachments/assets/21118255-0b7c-430b-ae64-293636164e49)
 ![image](https://github.com/user-attachments/assets/93c44f81-5b40-4f97-876f-17b24f3af3ec)
@@ -620,7 +620,7 @@ For comp large, there appears to be a trend of decreasing time as the number of 
 
 
 
-Radix Sort
+**Radix Sort**
 Currently there are issues regarding the metadata that has made analysis extremely difficult. This comes from a mislabeling of the number of processors and matrix size. Radix sort has ran 210/280 of the needed files with most errors coming at the 2^26 and 2^28 inputs and at the 512 and 1024 processor size. This shows that is room for improvement on networking and optomization of parameters. There is not enough communication being done and there is too much of a reliance on the master process.
 ### 4a. Vary the following parameters
 For input_size's:
