@@ -604,6 +604,7 @@ For main strong scaling speed up, sequential merge sort seems faster for smaller
 ![image](https://github.com/user-attachments/assets/b130834c-065a-485a-9415-be7940d2b9ae)
 ![image](https://github.com/user-attachments/assets/c1e44a61-d5bf-4298-9b8d-00577e43cddf)
 
+For comm strong scaling speed up, a decreasing speed up graph is expected. This is because there is no communication overhead for a single process. There is no need for data transfer between multiple processes. However, as we increase the number of processes, this means more processes need to communicate with each other. Particularly for merge sort, each process is performing merge sort on a subarray of the original input. As all of these subarrays get sent back to the master process to perform one final merge sort, a lot of communication overhead takes place. This is what results in the decreasing graphs for comm strong scaling speed up.
 
 ![image](https://github.com/user-attachments/assets/33b45563-bad7-4c99-8055-177814a088a0)
 ![image](https://github.com/user-attachments/assets/420f6eaa-c616-44cf-bc25-986ccb79cf91)
