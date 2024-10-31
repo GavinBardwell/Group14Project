@@ -721,7 +721,107 @@ For comp large weak scaling, the graph appears to be decreasing. This suggests t
 
 
 **Radix Sort**
-Currently there are issues regarding the metadata that has made analysis extremely difficult. This comes from a mislabeling of the number of processors and matrix size. Radix sort has ran 210/280 of the needed files with most errors coming at the 2^26 and 2^28 inputs and at the 512 and 1024 processor size. This shows that is room for improvement on networking and optomization of parameters. There is not enough communication being done and there is too much of a reliance on the master process.
+
+Strong Scaling Comm
+![image](Radix_Sort\radix_images\comm_input_size_65536.png)
+![image](Radix_Sort\radix_images\comm_input_size_262144.png)
+![image](Radix_Sort\radix_images\comm_input_size_1048576.png)
+![image](Radix_Sort\radix_images\comm_input_size_4194304.png)
+![image](Radix_Sort\radix_images\comm_input_size_16777216.png)
+![image](Radix_Sort\radix_images\comm_input_size_67108864.png)
+![image](Radix_Sort\radix_images\comm_input_size_268435456.png)
+Reviewing the communication graphs we an see the communication times dip dramatically. This does not make sense. Especially because We are adding more processes. I believe there is an issue with my MPI call resulting in errent times for communication. Going off the belief that this is correct we can assume communication decreasing means we are becoming more efficient with our communication with less data being switched around.
+
+Speed up comm
+![image](Radix_Sort\radix_images\comm_speedup_input_size_65536.png)
+![image](Radix_Sort\radix_images\comm_speedup_input_size_262144.png)
+![image](Radix_Sort\radix_images\comm_speedup_input_size_1048576.png)
+![image](Radix_Sort\radix_images\comm_speedup_input_size_4194304.png)
+![image](Radix_Sort\radix_images\comm_speedup_input_size_16777216.png)
+![image](Radix_Sort\radix_images\comm_speedup_input_size_67108864.png)
+![image](Radix_Sort\radix_images\comm_speedup_input_size_268435456.png)
+
+Our speed up for communication is very irregular in our graph. It increases speed up each section however tends to plateau around the 128 process count. This could be the limit of efficiency so we would need more optimizations.
+
+Weak Scaling Comm
+![image](Radix_Sort\radix_images\comm_weak_scaling.png)
+In ouyr weak scaling graph we see that the time for each process to communicate decreases as you add processes. Going back to our strong scaling this still does not make sense as you would think that as you add more processe your communication time would increase. 
+
+
+Strong Scaling comp
+![image](Radix_Sort\radix_images\comp_large_input_size_65536.png)
+![image](Radix_Sort\radix_images\comp_large_input_size_262144.png)
+![image](Radix_Sort\radix_images\comp_large_input_size_1048576.png)
+![image](Radix_Sort\radix_images\comp_large_input_size_4194304.png)
+![image](Radix_Sort\radix_images\comp_large_input_size_16777216.png)
+![image](Radix_Sort\radix_images\comp_large_input_size_67108864.png)
+![image](Radix_Sort\radix_images\comp_large_input_size_268435456.png)
+The time decrease for computation also decreases as you add processes. Thius seems to flatten out and then crashes to near zero after 32 processes. As you add processes for larger array sizes the code is not able to complete it showing inefficiencient use of memory and needs for optimizaitions. 
+
+Speed up comp
+![image](Radix_Sort\radix_images\comp_large_speedup_input_size_65536.png)
+![image](Radix_Sort\radix_images\comp_large_speedup_input_size_262144.png)
+![image](Radix_Sort\radix_images\comp_large_speedup_input_size_1048576.png)
+![image](Radix_Sort\radix_images\comp_large_speedup_input_size_4194304.png)
+![image](Radix_Sort\radix_images\comp_large_speedup_input_size_16777216.png)
+![image](Radix_Sort\radix_images\comp_large_speedup_input_size_67108864.png)
+![image](Radix_Sort\radix_images\comp_large_speedup_input_size_268435456.png)
+
+In our speed up graphs we can see a near linear speed up in our processes as you increase. This comes after 32 processes. This may come from the fact we are now using more than 1 node in Grace or could be some other issue. There seems to be more performance to be able to extract as the speed up was not 0 yet. 
+
+Weak scaling Comp
+![image](Radix_Sort\radix_images\comp_large_weak_scaling.png)
+
+In our weak scaling we see that adding more processes is beneficial up to some point. While there may be more performance to achieve with larger process sizes 64 process count seems like the most optimal. It drops dramatically before hand but afterwards the somputation stays about the same. 
+
+Strong Scaling main
+![image](Radix_Sort\radix_images\main_comp_input_size_65536.png)
+![image](Radix_Sort\radix_images\main_comp_input_size_262144.png)
+![image](Radix_Sort\radix_images\main_comp_input_size_1048576.png)
+![image](Radix_Sort\radix_images\main_comp_input_size_4194304.png)
+![image](Radix_Sort\radix_images\main_comp_input_size_16777216.png)
+![image](Radix_Sort\radix_images\main_comp_input_size_67108864.png)
+![image](Radix_Sort\radix_images\main_comp_input_size_268435456.png)
+
+Looking over our strong scaling main graphs we can see how adding more processes for larger array sizes becomes more efficient. At smaller array sizes our processes may not be able to optimize the entire use of the array and too much communication was happening compared to what is needed. 
+
+These graphs do decrease dramatically as you add processes at larger array sizes. However at some point the processes cant hold all the info from the arrays so crashes. If better space management was done from a code side this would become more efficient.
+
+Speed up main
+![image](Radix_Sort\radix_images\main_comp_speedup_input_size_65536.png)
+![image](Radix_Sort\radix_images\main_comp_speedup_input_size_262144.png)
+![image](Radix_Sort\radix_images\main_comp_speedup_input_size_1048576.png)
+![image](Radix_Sort\radix_images\main_comp_speedup_input_size_4194304.png)
+![image](Radix_Sort\radix_images\main_comp_speedup_input_size_16777216.png)
+![image](Radix_Sort\radix_images\main_comp_speedup_input_size_67108864.png)
+![image](Radix_Sort\radix_images\main_comp_speedup_input_size_268435456.png)
+
+At our lower array sizes the speed up seems to die out and not be efficient. However after 2^20 the speed up stays constant but dips at the end for process sizes. At the last 2 array sizes we are not able to go past 8 processes due to bad communications. In general we have fine speed up but need to have better overall communication.
+
+Weak scaling main
+![image](Radix_Sort\radix_images\main_comp_weak_scaling.png)
+
+The speed up via weak scaling seems quite good. It decreases dramatically until around 32 processes. We need to have better communication to allow for more speed up and for it not hit its limit so early. 
+
+
+**overall**
+
+![image](TotalTimeCombo.png)
+
+In our analysis of the various algorithms we can se that radix sort is very inefficient on few processes. As you increase with processes it becomes more efficient and levels out with the rest of the sorting algorithms. 
+
+Our implementation of merge is consistent and adding processes does not yield better performance due to increase commnucation sizes. 
+
+Our implementation of sample and bitonic are also not efficient on larger process sizes however were both better than radix sort and small process sizes. This shows that when using smaller servers use these instead of radix.
+
+![image](speedUpCombo.png)
+
+In our comparable speed up we see that radix has the most dramatic improvement. This is because it is so bad compared to the rest of the sorting algorithms that it has the most room to improve on its process time.
+
+Merge and sort has almost no speed up. This can be due to the extra overhead found from the adding of more communication channels.
+
+Bitonic has a little speed up but due to inconsistencies has issues at high process counts.
+
 ### 4a. Vary the following parameters
 For input_size's:
 - 2^16, 2^18, 2^20, 2^22, 2^24, 2^26, 2^28
