@@ -693,12 +693,15 @@ In the comm strong scaling speedup plots, speedup almost always decreases as the
 For the comp large strong scaling speedup plots, speedup almost always increases as processor amount increases which is correct as the increase in processor amount reduces computational load and would increase efficiency in these computations. The only outlier to this would be the 2^16 input type which is understandable as the smaller input could just be too inefficient with too many processors as it would take more time communicating than actual computation.
 
 ![image](https://github.com/user-attachments/assets/cd489118-c2d5-41d0-85ce-23d68a5c10b6)
+
 For weak scaling main, the graph has a large drop in execution time from 2 to 4 processors, and afterwards remains very constant as processor count increases. This shows that the main doesn't have much issue in workload as processors increase.
 
 ![image](https://github.com/user-attachments/assets/395ebbd6-35bb-4c7b-ab22-80a456eff35d)
+
 For the weak scaling comm graph, the time seems to increase as the processor count increases which aligns with the idea of increased communication overhead as there are more processors that the implementation has to communicate with. This is highlighted in the fact that the random array type has the largest execution time due to the unorganized input compared to other input types.
 
 ![image](https://github.com/user-attachments/assets/91f8cb6c-44b5-4014-95f6-e829885f7ad9)
+
 For weak scaling comp large graph, the time drops tremendously from 2 to 4 processors and then stays low as processor count increases, showing the algorithm having to perform less work as processor counts increase due to the balanced workload. 
 
 **Merge Sort**
@@ -767,12 +770,15 @@ For comm strong scaling speed up, a decreasing speed up graph is expected. This 
 For comp large strong scaling speed up, all of the graphs are increasing for each input size. This is because the work is divided evenly among the many processes. For a single process, the computation time depends mostly on the input size. If the work is divided among more processes, the work load for each individual process is less. This decreases the overall computation time for each process since each process is working with a smaller subarray. This is what results in the increasing graph as the number of processes increases.
 
 ![image](https://github.com/user-attachments/assets/3c92a664-66e8-48d9-a628-8c6f5dc1ccca)
+
 For main weak scaling, the graph appears to be relatively constant. This suggests that merge sort scales well with an increasing workload. Each process handles its portion of the workload without significant overhead.
 
 ![image](https://github.com/user-attachments/assets/be8b0cbe-53f6-4495-87ef-ae3187c6d3ab)
+
 For comm weak scaling, the increasing graph as the number of processes increases and the input size increases suggests that the communication overhead is also growing, interfering with the overall execution time of the merge sort algorithm. However, with a slighly logarithmic curve, this will likely become less of a problem for input sizes greater than 2^28.
 
 ![image](https://github.com/user-attachments/assets/c995de7d-ee8d-4fda-97dc-d55846849f1a)
+
 For comp large weak scaling, the graph appears to be decreasing. This suggests that there is efficient workload distribution, resulting in less work for each process as we increase the number of processes and input size.
 
 
@@ -787,6 +793,7 @@ Strong Scaling Comm
 ![image](Radix_Sort/radix_images/comm_input_size_16777216.png)
 ![image](Radix_Sort/radix_images/comm_input_size_67108864.png)
 ![image](Radix_Sort/radix_images/comm_input_size_268435456.png)
+
 Reviewing the communication graphs we an see the communication times dip dramatically. This does not make sense. Especially because We are adding more processes. I believe there is an issue with my MPI call resulting in errent times for communication. Going off the belief that this is correct we can assume communication decreasing means we are becoming more efficient with our communication with less data being switched around.
 
 Speed up comm
@@ -802,7 +809,8 @@ Our speed up for communication is very irregular in our graph. It increases spee
 
 Weak Scaling Comm
 ![image](Radix_Sort/radix_images/comm_weak_scaling.png)
-In ouyr weak scaling graph we see that the time for each process to communicate decreases as you add processes. Going back to our strong scaling this still does not make sense as you would think that as you add more processe your communication time would increase. 
+
+In our weak scaling graph we see that the time for each process to communicate decreases as you add processes. Going back to our strong scaling this still does not make sense as you would think that as you add more processe your communication time would increase. 
 
 
 Strong Scaling comp
@@ -813,6 +821,7 @@ Strong Scaling comp
 ![image](Radix_Sort/radix_images/comp_large_input_size_16777216.png)
 ![image](Radix_Sort/radix_images/comp_large_input_size_67108864.png)
 ![image](Radix_Sort/radix_images/comp_large_input_size_268435456.png)
+
 The time decrease for computation also decreases as you add processes. Thius seems to flatten out and then crashes to near zero after 32 processes. As you add processes for larger array sizes the code is not able to complete it showing inefficiencient use of memory and needs for optimizaitions. 
 
 Speed up comp
