@@ -856,7 +856,7 @@ Speed up main
 At our lower array sizes the speed up seems to die out and not be efficient. However after 2^20 the speed up stays constant but dips at the end for process sizes. At the last 2 array sizes we are not able to go past 8 processes due to bad communications. In general we have fine speed up but need to have better overall communication.
 
 Weak scaling main
-![image](Radix_Sort\radix_images\main_comp_weak_scaling.png)
+![image](\Radix_Sort\radix_images\main_comp_weak_scaling.png)
 
 The speed up via weak scaling seems quite good. It decreases dramatically until around 32 processes. We need to have better communication to allow for more speed up and for it not hit its limit so early. 
 
