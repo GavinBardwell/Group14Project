@@ -631,7 +631,7 @@ to the master to check the correctness of the array. I believe this is what caus
 
 
 **Sample Sort**
-Note: All of the following Sample Sort graphs are limited to 64 processors as the cali files above 64 were not able to be processed correctly.
+Note: All of the following Sample Sort graphs are limited to 64 processors as the cali files above 64 were not able to be processed by thicket correctly.
 ![image](https://github.com/user-attachments/assets/2aff0234-b8d3-4171-921e-8f156fdc87b3)
 ![image](https://github.com/user-attachments/assets/a96a633b-8cad-43a0-a0f5-47b7ee072e25)
 ![image](https://github.com/user-attachments/assets/c132bc85-3d5a-4428-bfc5-9c31f2ceed3f)
