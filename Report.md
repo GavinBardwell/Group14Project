@@ -631,18 +631,75 @@ to the master to check the correctness of the array. I believe this is what caus
 
 
 **Sample Sort**
-![image](https://github.com/user-attachments/assets/b3536b67-39d5-4489-aa98-0ace6313c4c3)
-Looking at this main graph, it is clear that a sorted array drastically increases the time of the sort in comparison to a random array.
-![image](https://github.com/user-attachments/assets/3f7280c2-6d87-4d61-a948-05d94a01ce1f)
-For the comm graph, it stays pretty consistent times in the different array types. This is likely just due to the low amount of processors so they don't have to compete for resources.
-![image](https://github.com/user-attachments/assets/a84480b7-4608-437f-982e-c7159fbec546)
+Note: All of the following Sample Sort graphs are limited to 64 processors as the cali files above 64 were not able to be processed correctly.
+![image](https://github.com/user-attachments/assets/2aff0234-b8d3-4171-921e-8f156fdc87b3)
+![image](https://github.com/user-attachments/assets/a96a633b-8cad-43a0-a0f5-47b7ee072e25)
+![image](https://github.com/user-attachments/assets/c132bc85-3d5a-4428-bfc5-9c31f2ceed3f)
+![image](https://github.com/user-attachments/assets/35ddb257-4763-4681-bdeb-78e88d5ad79d)
+![image](https://github.com/user-attachments/assets/7f7c3694-8a70-4968-a376-f1f7d35cf22e)
+![image](https://github.com/user-attachments/assets/8d0dbc81-1e63-40ed-9724-06f0d1673db1)
+![image](https://github.com/user-attachments/assets/4469d9ef-b96e-4b68-9613-18a4d92f4e9a)
 
-![image](https://github.com/user-attachments/assets/a1875e8f-824d-4eb0-b566-6905d90b08fb)
+Observing these main strong scaling graphs, processing time seems to increase as the amount of processors increase up until 2^24, at which point the execution time is higher with less processors and decreases as the amount of processors increase. This is likely due to smaller input sizes result in wasted time through communication and synchronization overhead while larger input sizes utilize this time better. Overall, most of the graphs seem to taper off around 64 processors, indicating that adding more processors wouldn't make the algorithm any more efficient and it would be more efficient to look for ways to improve the algorithm itself rather than indefinitely scaling up the amount of processors.
 
-![image](https://github.com/user-attachments/assets/53a47842-7e8d-40b2-80a3-b79c76172d49)
+![image](https://github.com/user-attachments/assets/d2f8ed68-11c9-471e-9f79-54efdbfac3b5)
+![image](https://github.com/user-attachments/assets/0ba78029-9bc3-47ee-a1dd-d7df9ec954a5)
+![image](https://github.com/user-attachments/assets/d2133a83-8e5a-4cc2-ba6a-801d02f96a90)
+![image](https://github.com/user-attachments/assets/ff4a5502-60d6-4c14-a585-dc396ed76c80)
+![image](https://github.com/user-attachments/assets/2eb1cf30-38be-45b2-a0e9-4492200233d4)
+![image](https://github.com/user-attachments/assets/7666f9b2-9cb7-4f37-b3dc-d802d787a992)
+![image](https://github.com/user-attachments/assets/005d433b-bb6b-48a2-9b55-4175339b4d2c)
 
-For the small computation regions, it seems like the time is just barely larger when an array is sorted in comparison to random, but in the large computation region this is flipped and the time is barely larger when the array is random.
+For the comm strong scaling graphs, 2^16 is the only outlier with a very low time except for the reverse sorted arrays causing a huge spike which could just be nondeterministic. For each input size after that, they tend to look pretty similar with the graphs almost looking like a pyramid, and the perturbed arrays tend to have a large spike in time at 32 processors, and something to note is that starting from 2^22 and up input sizes, the random array types tend to have the highest time compared to the other array types. This indicates that non-uniform data access patterns increase communication costs greatly compared to other array types. Sorted and Reverse Sorted arrays tend to have the lowest communication overhead, suggesting better scalability for these array types.
 
+![image](https://github.com/user-attachments/assets/80150cb2-1f9a-4114-94c6-1268590bbc66)
+![image](https://github.com/user-attachments/assets/a1c7dfdd-484c-469e-be66-7b5aae0d9459)
+![image](https://github.com/user-attachments/assets/ca3f95d9-63b8-40df-8514-daee0399b5f9)
+![image](https://github.com/user-attachments/assets/18e0bdee-d596-462b-b269-09c7d41e6ede)
+![image](https://github.com/user-attachments/assets/ec05870c-dfd4-473a-9032-6dfeb7dabdcf)
+![image](https://github.com/user-attachments/assets/3d15adec-a840-42a0-9f02-ebf6dd2d10fa)
+![image](https://github.com/user-attachments/assets/e8e00905-94b4-4b15-a17e-e568c930fe01)
+
+For these comp large strong scaling graphs, 2^16 is again the only outlier however it makes sense as the lower input size could result in wasted/inefficient computation time as processor counts increase due to specific array types such as random, sorted, or perturbed. For all the input types larger than 2^16, the graphs are very consistent where as the amount of processors increase, the computation time decreases which aligns with the goal of parallelizing these algorithms of splitting up the workload would increase efficiency of the algorithm itself.
+
+![image](https://github.com/user-attachments/assets/b99037ae-4589-47cd-8539-ee8b9237ab59)
+![image](https://github.com/user-attachments/assets/8e56b810-4a1e-481f-b528-475b8ccd3ef3)
+![image](https://github.com/user-attachments/assets/00f2a61e-6e50-4d16-87d6-3c32979f5f43)
+![image](https://github.com/user-attachments/assets/79d657d0-858d-4d88-96f8-79bc34a47ad6)
+![image](https://github.com/user-attachments/assets/2d7e0314-db00-483a-b622-8fa072de63fd)
+![image](https://github.com/user-attachments/assets/bc2e6e3d-8878-4c95-8bde-6789e57545d9)
+![image](https://github.com/user-attachments/assets/5d5557cc-955e-47ff-8caf-25f789c54519)
+
+Looking at the main strong scaling speedup plots, speedup tends to almost always decline as processors increase from every input size lower than 2^26, which is likely due to communication and synchronization overhead. Despite this, 2^26 and 2^28 input types have a solid increase in speedup which show that larger input types benefit more from parallelization.
+
+![image](https://github.com/user-attachments/assets/67cb36f1-55da-4662-abca-89ec01912b79)
+![image](https://github.com/user-attachments/assets/b4c224cb-e348-48e3-ad27-858d66552564)
+![image](https://github.com/user-attachments/assets/9cb2d018-a9eb-4402-947d-815ad8145e1d)
+![image](https://github.com/user-attachments/assets/839b1b78-5a8b-4c94-9570-23f060d1f61f)
+![image](https://github.com/user-attachments/assets/f22e9596-6863-4f26-889b-3a5cec56aeec)
+![image](https://github.com/user-attachments/assets/1b65df29-4270-4f8d-b224-9de49cebb5b2)
+![image](https://github.com/user-attachments/assets/3b7c446a-572e-4871-abbe-ce2ff5860d55)
+
+In the comm strong scaling speedup plots, speedup almost always decreases as the amount of processors increase which is correct as there is always a larger amount of communication overhead with the increase in processors. Some of these graphs spike back up at 64 processors, which I cannot exactly tell if it is nondeterministic or not, but this could be due to these specific array types being sorted could help in communication with larger processor counts, as the random array type in these plots does not spike up as much as the other array types.
+
+![image](https://github.com/user-attachments/assets/952ffc0d-a5a0-4698-8222-ff64e88397fd)
+![image](https://github.com/user-attachments/assets/303e39a9-428d-473e-a08a-a63b49387204)
+![image](https://github.com/user-attachments/assets/2af3b92f-3db0-491a-a99f-532671cddc6a)
+![image](https://github.com/user-attachments/assets/d2ac4320-7f3e-47b8-a9c1-08b9cafe7de5)
+![image](https://github.com/user-attachments/assets/b9b8e823-7d25-40ab-a982-c31fed413ffd)
+![image](https://github.com/user-attachments/assets/b8a97b37-6669-4402-a506-eda7930bacdc)
+![image](https://github.com/user-attachments/assets/c1f96ef9-3a5d-44b9-9139-94fd9e2320a9)
+
+For the comp large strong scaling speedup plots, speedup almost always increases as processor amount increases which is correct as the increase in processor amount reduces computational load and would increase efficiency in these computations. The only outlier to this would be the 2^16 input type which is understandable as the smaller input could just be too inefficient with too many processors as it would take more time communicating than actual computation.
+
+![image](https://github.com/user-attachments/assets/cd489118-c2d5-41d0-85ce-23d68a5c10b6)
+For weak scaling main, the graph has a large drop in execution time from 2 to 4 processors, and afterwards remains very constant as processor count increases. This shows that the main doesn't have much issue in workload as processors increase.
+
+![image](https://github.com/user-attachments/assets/395ebbd6-35bb-4c7b-ab22-80a456eff35d)
+For the weak scaling comm graph, the time seems to increase as the processor count increases which aligns with the idea of increased communication overhead as there are more processors that the implementation has to communicate with. This is highlighted in the fact that the random array type has the largest execution time due to the unorganized input compared to other input types.
+
+![image](https://github.com/user-attachments/assets/91f8cb6c-44b5-4014-95f6-e829885f7ad9)
+For weak scaling comp large graph, the time drops tremendously from 2 to 4 processors and then stays low as processor count increases, showing the algorithm having to perform less work as processor counts increase due to the balanced workload. 
 
 **Merge Sort**
 
