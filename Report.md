@@ -832,7 +832,7 @@ Weak scaling Comp
 In our weak scaling we see that adding more processes is beneficial up to some point. While there may be more performance to achieve with larger process sizes 64 process count seems like the most optimal. It drops dramatically before hand but afterwards the somputation stays about the same. 
 
 Strong Scaling main
-![image](Radix_Sort\radix_images\main_comp_input_size_65536.png)
+![image](Radix_Sort/radix_image/main_comp_input_size_65536.png)
 ![image](Radix_Sort\radix_images\main_comp_input_size_262144.png)
 ![image](Radix_Sort\radix_images\main_comp_input_size_1048576.png)
 ![image](Radix_Sort\radix_images\main_comp_input_size_4194304.png)
